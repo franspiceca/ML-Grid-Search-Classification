@@ -1,0 +1,28 @@
+import pandas as pd
+import numpy as np
+from seaborn import load_dataset
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression 
+from sklearn.preprocessing import FunctionTransformer, MinMaxScaler, StandardScaler, OneHotEncoder
+from sklearn.impute import SimpleImputer
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import GridSearchCV
+
+##Reading file, Converting dates to datetime format
+df = pd.read_csv("pls_fy18_state_pud18i.csv", parse_dates=['STARTDAT','ENDDATE'])
+
+##Drop columns that are territories/not states: Guam, American Samoa, Northern Mariana Islands & D.C.
+df = df.drop(df.index[[3,8,12,27]])
+
+df = df[["STABR", "POPU_LSA", "POPU_ST", "CENTLIB", "BRANLIB", "BKMOB", "TOTSTAFF", "TOTINCM"]]
+df.head()
+
+continuous_features = ["POPU_LSA", "POPU_ST", "CENTLIB", "BRANLIB", "BKMOB", "TOTSTAFF"]
+discrete_features = ["STABR"]
+
+X = df[continuous_features + discrete_features]
+y = df["TOTINCM"]
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+
