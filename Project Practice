@@ -26,3 +26,24 @@ y = df["TOTINCM"]
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
 
+num_transformer = Pipeline(steps=[('impute', SimpleImputer(strategy='median'))
+                                 ,('scale', MinMaxScaler())])
+
+cat_transformer = Pipeline(steps=[('impute', SimpleImputer(strategy='constant', fill_value='Missing'))
+                                 ,('enc', OneHotEncoder(sparse=False, handle_unknown='ignore'))])
+
+preprocessor = ColumnTransformer([('num', num_transformer,continuous_features)
+                                 ,('cat',cat_transformer,discrete_features)]
+                                ,remainder='passthrough')
+
+pipe = Pipeline(steps=[('preprocess', preprocessor), 
+                       ('model', LogisticRegression(solver='saga'))])
+
+parameters = {'preprocess__num__scale': [MinMaxScaler(), StandardScaler()],
+              'model__penalty': ['l1', 'l2'],
+              'model__C': [0.1, 1, 10]
+             }
+
+print("Parameter grid:\n{}".format(parameters),'\n')
+
+grid =  GridSearchCV(pipe, parameters, cv=5, return_train_score=True, scoring='roc_auc', n_jobs=3)
