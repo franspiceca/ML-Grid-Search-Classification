@@ -41,3 +41,14 @@ preprocessor = ColumnTransformer([('num', num_transformer,continuous_features)
 
 pipe = Pipeline(steps=[('preprocess', preprocessor), 
                        ('model', LogisticRegression(solver='saga'))])
+
+##Setting up my parameters
+parameters = {'preprocess__num__scale': [MinMaxScaler(), StandardScaler()],
+              'model__penalty': ['l1', 'l2'],
+              'model__C': [0.1, 1, 10]
+             }
+
+print("Parameter grid:\n{}".format(parameters),'\n')
+
+##Defining my grid search
+grid =  GridSearchCV(pipe, parameters, cv=5, return_train_score=True, scoring='roc_auc', n_jobs=3)
