@@ -52,3 +52,17 @@ print("Parameter grid:\n{}".format(parameters),'\n')
 
 ##Defining my grid search
 grid =  GridSearchCV(pipe, parameters, cv=5, return_train_score=True, scoring='roc_auc', n_jobs=3)
+
+##Printing best parameters and results
+print('best params ',model.best_params_,'\n')
+print('best estimator ',model.best_estimator_,'\n')
+print('best validation score ', model.best_score_,'\n')
+print('scoring method ', model.scorer_)
+
+print("Test set accuracy score: {:.7f}".format(model.score(X_test, y_test)))
+
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import accuracy_score, recall_score, precision_score, fbeta_score, classification_report
+
+##Making predictions against test set
+pred = model.predict(X_test)
