@@ -66,3 +66,18 @@ from sklearn.metrics import accuracy_score, recall_score, precision_score, fbeta
 
 ##Making predictions against test set
 pred = model.predict(X_test)
+
+##Showing confusion matrix
+print("confusion matrix:")
+print(confusion_matrix(y_test, pred))
+
+##Finding accruacy scores against predictions
+print("accuracy: %0.3f" % accuracy_score(y_test, pred))
+print("recall: %0.3f" % recall_score(y_test, pred))
+print("precision: %0.3f" % precision_score(y_test, pred))
+print("f-measure: %0.3f" % fbeta_score(y_test, pred, beta=1))
+print(classification_report(y_test,pred))
+
+##Getting probability
+probs = model.predict_proba(X_test)
+probs
