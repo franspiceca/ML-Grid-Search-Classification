@@ -20,3 +20,24 @@ continuous_features = ['carat', 'depth', 'table', 'x', 'y', 'z']
 #Making discrete features categorical
 for i in discrete_features:
     df[i]=pd.Categorical(df[i].astype(str))
+    
+##Setting my X and y values
+X = df[continuous_features + discrete_features]
+y = df['price']
+
+##Setting my testing and training data (and random seed to reproduce easily)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+
+##Setting up my pipeline
+num_transformer = Pipeline(steps=[('impute', SimpleImputer(strategy='median'))
+                                 ,('scale', MinMaxScaler())])
+
+cat_transformer = Pipeline(steps=[('impute', SimpleImputer(strategy='constant', fill_value='Missing'))
+                                 ,('enc', OneHotEncoder(sparse=False, handle_unknown='ignore'))])
+
+preprocessor = ColumnTransformer([('num', num_transformer,continuous_features)
+                                 ,('cat',cat_transformer,discrete_features)]
+                                ,remainder='passthrough')
+
+pipe = Pipeline(steps=[('preprocess', preprocessor), 
+                       ('model', LogisticRegression(solver='saga'))])
